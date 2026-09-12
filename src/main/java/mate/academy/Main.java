@@ -2,11 +2,9 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 import mate.academy.service.BookDao;
-import mate.academy.service.impl.BookDaoImpl;
 
 public class Main {
     public static void main(String[] args) {
