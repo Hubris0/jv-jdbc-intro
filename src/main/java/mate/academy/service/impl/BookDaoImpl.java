@@ -18,7 +18,7 @@ import mate.academy.util.ConnectionUtil;
 @Dao
 public class BookDaoImpl implements BookDao {
 
-    public Book prepareBook(ResultSet resultSet) {
+    private Book prepareBook(ResultSet resultSet) {
         Book book = new Book();
         try {
             Long rowId = resultSet.getObject("id", Long.class);
@@ -94,8 +94,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Book book = new Book();
-                book = prepareBook(resultSet);
+                Book book = prepareBook(resultSet);
                 books.add(book);
             }
 

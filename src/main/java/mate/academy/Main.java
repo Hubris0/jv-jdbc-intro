@@ -2,12 +2,16 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import mate.academy.lib.Injector;
 import mate.academy.model.Book;
+import mate.academy.service.BookDao;
 import mate.academy.service.impl.BookDaoImpl;
 
 public class Main {
     public static void main(String[] args) {
-        BookDaoImpl bookDao = new BookDaoImpl();
+        Injector injector = Injector.getInstance("mate.academy");
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         BigDecimal price1 = new BigDecimal("120.50");
         String title1 = "Lord of the Rings";
