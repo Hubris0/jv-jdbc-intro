@@ -17,6 +17,22 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+
+    public Book prepareBook(ResultSet resultSet) {
+        Book book = new Book();
+        try {
+            Long rowId = resultSet.getObject("id", Long.class);
+            book.setId(rowId);
+            String title = resultSet.getString("title");
+            book.setTitle(title);
+            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+            book.setPrice(price);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return book;
+    }
+
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -57,18 +73,12 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                book = new Book();
-                Long rowId = resultSet.getObject("id", Long.class);
-                book.setId(rowId);
-                String title = resultSet.getString("title");
-                book.setTitle(title);
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                book.setPrice(price);
+                book = prepareBook(resultSet);
                 return Optional.of(book);
             }
 
         } catch (DataProcessingException | SQLException e) {
-            throw new DataProcessingException("Can't find book " + book, e);
+            throw new DataProcessingException("Can't find book with id: " + id, e);
         }
         return Optional.empty();
     }
@@ -84,14 +94,8 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Long rowId = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
                 Book book = new Book();
-                book.setId(rowId);
-                book.setTitle(title);
-                book.setPrice(price);
+                book = prepareBook(resultSet);
                 books.add(book);
             }
 
@@ -118,7 +122,7 @@ public class BookDaoImpl implements BookDao {
                         + "at least one row, but updated 0 rows");
             }
         } catch (DataProcessingException | SQLException e) {
-            throw new DataProcessingException("Can't find any books", e);
+            throw new DataProcessingException("Can't update book with id: " + book.getId(), e);
         }
         return book;
     }
@@ -135,7 +139,7 @@ public class BookDaoImpl implements BookDao {
             return preparedStatement.executeUpdate() > 0;
 
         } catch (DataProcessingException | SQLException e) {
-            throw new DataProcessingException("Can't find any books", e);
+            throw new DataProcessingException("Can't delete book with id: " + id, e);
         }
     }
 }
